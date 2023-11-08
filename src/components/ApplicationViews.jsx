@@ -12,14 +12,24 @@ export const ApplicationViews = () => {
     const [rocksState, setRocksState] = useState([{
         id: 1,
         name: "Sample",
+        weight: 0,
         type: {
             id: 1,
             label: "Volcanic"
+        },
+        user: {
+            first_name: "Admina",
+            last_name: "Staytor"
         }
     }])
 
-    const fetchRocksFromAPI = async () => {
-        const response = await fetch("http://localhost:8000/rocks",
+    const fetchRocksFromAPI = async (showAll) => {
+        let url = "http://localhost:8000/rocks"
+
+        if (showAll !== true){
+            url = "http://localhost:8000/rocks?owner=current"
+        }
+        const response = await fetch(url,
             {
                 headers: {
                     Authorization: `Token ${JSON.parse(localStorage.getItem("rock_token")).token}`
@@ -35,9 +45,9 @@ export const ApplicationViews = () => {
             <Route path="/register" element={<Register />} />
             <Route element={<Authorized />}>
                 <Route path="/" element={<Home />} />
-                <Route path="/allrocks" element={<RockList rocks={rocksState} fetchRocks={fetchRocksFromAPI} />} />
+                <Route path="/allrocks" element={<RockList rocks={rocksState} fetchRocks={fetchRocksFromAPI} showAll={true} />} />
                 <Route path="/create" element={<RockForm fetchRocks={fetchRocksFromAPI} />} />
-                <Route path="/mine" element={<RockList rocks={rocksState} fetchRocks={fetchRocksFromAPI} />} />
+                <Route path="/mine" element={<RockList rocks={rocksState} fetchRocks={fetchRocksFromAPI} showAll={false}/>} />
             </Route>
         </Routes>
     </BrowserRouter>
